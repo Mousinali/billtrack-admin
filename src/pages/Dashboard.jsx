@@ -1,342 +1,400 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
-import "remixicon/fonts/remixicon.css";
+import { useNavigate } from "react-router-dom";
 
-const statCards = [
-  {
-    label: "Total Invoices",
-    value: "2,430",
-    change: "+12%",
-    positive: true,
-  },
-  {
-    label: "Paid Invoices",
-    value: "1,980",
-    change: "+8%",
-    positive: true,
-  },
-  {
-    label: "Unpaid Invoices",
-    value: "450",
-    change: "-3%",
-    positive: false,
-  },
-  {
-    label: "Total Revenue",
-    value: "₹7,85,400",
-    change: "+10%",
-    positive: true,
-  },
-];
+export default function Dashboard() {
+  const navigate = useNavigate();
 
-const invoices = [
-  {
-    id: "INV-20241",
-    customer: "Rahul Sharma",
-    phone: "6290397299",
-    amount: "₹1,200",
-    status: "Paid",
-    date: "21 Feb 2025",
-    time: "11:32 AM",
-  },
-  {
-    id: "INV-20242",
-    customer: "Neha Patel",
-    phone: "7001239870",
-    amount: "₹900",
-    status: "Unpaid",
-    date: "21 Feb 2025",
-    time: "10:12 AM",
-  },
-  {
-    id: "INV-20243",
-    customer: "Arjun Singh",
-    phone: "9087654210",
-    amount: "₹2,450",
-    status: "Paid",
-    date: "20 Feb 2025",
-    time: "05:44 PM",
-  },
-  {
-    id: "INV-20244",
-    customer: "Priya Das",
-    phone: "7896541230",
-    amount: "₹780",
-    status: "Unpaid",
-    date: "20 Feb 2025",
-    time: "03:20 PM",
-  },
-];
-
-const periodOptions = ["12 months", "30 days", "7 days", "24 hours"];
-
-export default function InvoiceDashboard() {
-  const [activePeriod, setActivePeriod] = useState("30 days");
-
-  // Simple static data – you can swap based on activePeriod if you want
-  const barSeries = [
+  // ------------------ INVOICE DATA ------------------
+  const invoices = [
     {
-      name: "Invoices",
-      data: [160, 220, 190, 260, 210, 240, 280, 200, 230, 260, 220, 300],
+      id: "INV-20241",
+      customer: "Rahul Sharma",
+      phone: "6290397299",
+      amount: "₹1,200",
+      status: "Paid",
+      date: "21 Feb 2025",
+      time: "11:32 AM",
+    },
+    {
+      id: "INV-20242",
+      customer: "Neha Patel",
+      phone: "7001239870",
+      amount: "₹900",
+      status: "Unpaid",
+      date: "21 Feb 2025",
+      time: "10:12 AM",
+    },
+    {
+      id: "INV-20243",
+      customer: "Arjun Singh",
+      phone: "9087654210",
+      amount: "₹2,450",
+      status: "Paid",
+      date: "20 Feb 2025",
+      time: "05:44 PM",
+    },
+    {
+      id: "INV-20244",
+      customer: "Priya Das",
+      phone: "7896541230",
+      amount: "₹780",
+      status: "Unpaid",
+      date: "20 Feb 2025",
+      time: "03:20 PM",
     },
   ];
 
+  // ------------------ TABLE LOGIC ------------------
+  const [search, setSearch] = useState("");
+  const [entries, setEntries] = useState(10);
+
+  const filteredInvoices = invoices.filter((inv) =>
+    inv.customer.toLowerCase().includes(search.toLowerCase()) ||
+    inv.phone.includes(search) ||
+    inv.id.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // ------------------ CREATE INVOICE SHORTCUT ------------------
+  const goToCreateInvoice = () => navigate("/create-invoice");
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.shiftKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        goToCreateInvoice();
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  // ------------------ BAR CHART ------------------
+  const [filter, setFilter] = useState("monthly");
+
+  // -------------------------------
+  // MONTHLY (30 days)
+  // -------------------------------
+  const monthlyDays = Array.from({ length: 30 }, (_, i) => `${i + 1}`);
+  const monthlyData = [
+    120, 95, 140, 160, 110, 180, 200, 90, 130, 150,
+    170, 210, 190, 100, 125, 160, 230, 95, 80, 260,
+    300, 210, 190, 130, 170, 200, 220, 250, 180, 140
+  ];
+
+  // -------------------------------
+  // HOURLY DATA (Today - 24 hours)
+  // -------------------------------
+  const hourlyLabels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+  const hourlyData = Array.from({ length: 24 }, () =>
+    Math.floor(Math.random() * 100) + 20
+  );
+
+  // FILTER RESULTS
+  let labels = [];
+  let data = [];
+
+  // TODAY (Hourly)
+  if (filter === "today") {
+    labels = hourlyLabels;
+    data = hourlyData;
+  }
+
+  // THIS WEEK (last 7 days)
+  if (filter === "this_week") {
+    labels = monthlyDays.slice(-7);
+    data = monthlyData.slice(-7);
+  }
+
+  // LAST WEEK (previous 7 days)
+  if (filter === "last_week") {
+    labels = monthlyDays.slice(-14, -7);
+    data = monthlyData.slice(-14, -7);
+  }
+
+  // MONTHLY (all days)
+  if (filter === "monthly") {
+    labels = monthlyDays;
+    data = monthlyData;
+  }
+
+  // -------------------------------
+  // CHART OPTIONS
+  // -------------------------------
   const barOptions = {
-    chart: {
-      type: "bar",
-      toolbar: { show: false },
-      fontFamily:
-        "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-    },
-    colors: ["#EA6B23"],
+    chart: { type: "bar", toolbar: { show: false } },
+    colors: ["#4F46E5"],
     plotOptions: {
-      bar: {
-        borderRadius: 8,
-        columnWidth: "40%",
-      },
+      bar: { borderRadius: 5, columnWidth: filter === "today" ? "60%" : "40%" },
     },
     dataLabels: { enabled: false },
-    grid: {
-      borderColor: "#E5E7EB",
-      strokeDashArray: 3,
-      yaxis: { lines: { show: true } },
-      xaxis: { lines: { show: false } },
-    },
     xaxis: {
-      categories: [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-      ],
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-      labels: {
-        style: { colors: "#9CA3AF", fontSize: "11px" },
-      },
+      categories: labels,
+      labels: { style: { colors: "#94A3B8", fontSize: filter === "today" ? "10px" : "12px" } },
     },
-    yaxis: {
-      labels: {
-        style: { colors: "#9CA3AF", fontSize: "11px" },
-      },
-    },
-    tooltip: {
-      y: {
-        formatter: (val) => `${val} invoices`,
-      },
-    },
-    legend: { show: false },
+    yaxis: { labels: { style: { colors: "#94A3B8" } } },
+    grid: { borderColor: "#E2E8F0" },
   };
 
+  const barSeries = [
+    { name: filter === "today" ? "Hourly Sales" : "Daily Sales", data: data },
+  ];
+
+
+
   return (
-    <div className="space-y-6 md:space-y-8">
-      {/* PAGE HEADER */}
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Invoice Analytics</h1>
-        <p className="text-sm text-slate-500">
-          Overview of invoice performance and recent activity.
-        </p>
-      </div>
+    <div className="space-y-8">
 
-      {/* STAT CARDS */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {statCards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-2xl bg-white border border-slate-200 shadow-sm px-5 py-4 flex flex-col justify-between"
-          >
-            <p className="text-xs text-slate-500">{card.label}</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">
-              {card.value}
-            </p>
-            <div className="mt-2 inline-flex items-center text-[11px]">
-              <span
-                className={`px-2 py-[3px] rounded-full font-medium mr-2 ${
-                  card.positive
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-rose-50 text-rose-600"
-                }`}
-              >
-                {card.change}
-              </span>
-              <span className="text-slate-400">Vs last month</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ANALYTICS + CHART */}
-      <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-          <div>
-            <p className="text-sm font-semibold text-slate-900">Analytics</p>
-            <p className="text-xs text-slate-500">
-              Invoice analytics of last 30 days
-            </p>
-          </div>
-
-          <div className="inline-flex rounded-full bg-slate-100 p-1 text-xs">
-            {periodOptions.map((p) => (
-              <button
-                key={p}
-                onClick={() => setActivePeriod(p)}
-                className={`px-3 py-1 rounded-full whitespace-nowrap ${
-                  activePeriod === p
-                    ? "bg-white shadow-sm text-slate-900"
-                    : "text-slate-500"
-                }`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
+      {/* HEADER */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+          <p className="text-sm text-slate-500">Overview of your business performance.</p>
         </div>
 
-        <ReactApexChart
-          options={barOptions}
-          series={barSeries}
-          type="bar"
-          height={320}
-        />
+        <button
+          onClick={goToCreateInvoice}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm flex items-center gap-2"
+        >
+          Create Invoice <i className="ri-add-line"></i>
+        </button>
       </div>
 
-      {/* INVOICE TABLE CARD */}
-      <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
-        {/* TOP CONTROLS */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span>Show</span>
-            <select className="border border-slate-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#EA6B23]/30">
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-            </select>
-            <span>entries</span>
+      {/* --------- TOP LAYOUT EXACT LIKE IMAGE ---------- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+        {/* LEFT SIDE: Revenue + Orders + Monthly Sales */}
+        <div className="col-span-2 space-y-6">
+
+          {/* Revenue + Orders */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            {/* REVENUE CARD */}
+            <div className="
+              bg-white border border-slate-200 rounded-xl p-6
+              shadow-[0_4px_14px_rgba(0,0,0,0.05)]
+              hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]
+              transition-all duration-300
+            ">
+              <div className="flex items-center gap-4 justify-between">
+                <div>
+                  <p className="text-slate-500 text-sm font-medium">Today's Sales</p>
+                  <div className="flex items-end mt-1 gap-3">
+                    <p className="text-2xl font-semibold text-slate-900">₹3,782</p>
+                    <span className="
+                 inline-flex items-center gap-1 text-emerald-600
+                text-xs font-semibold pb-0.75
+              ">
+                      <i className="ri-arrow-up-s-line"></i> 11.01%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="
+                  w-14 h-14 rounded-2xl flex items-center justify-center text-2xl
+                  bg-gradient-to-br from-indigo-50 to-white border border-indigo-100
+                ">
+                  <i className="ri-money-rupee-circle-line text-indigo-600"></i>
+                </div>
+              </div>
+
+
+            </div>
+
+            {/* Invoices CARD */}
+            <div className="
+              bg-white border border-slate-200 rounded-xl p-6
+              shadow-[0_4px_14px_rgba(0,0,0,0.05)]
+              hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]
+              transition-all duration-300
+            ">
+              <div className="flex items-center gap-4 justify-between">
+                <div>
+                  <p className="text-slate-500 text-sm font-medium">Invoices</p>
+                  <div className="flex items-end mt-1 gap-3">
+                    <p className="text-2xl font-semibold text-slate-900">18</p>
+                    <span className="
+                 inline-flex items-center gap-1 text-emerald-600
+                text-xs font-semibold pb-0.75
+              ">
+                      <i className="ri-arrow-up-s-line"></i> 11.01%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="
+                  w-14 h-14 rounded-2xl flex items-center justify-center text-3xl
+                  bg-gradient-to-br from-green-50 to-white border border-green-100
+                ">
+                  <i className="ri-bill-line text-green-600"></i>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Products CARD */}
+            <div className="
+              bg-white border border-slate-200 rounded-xl p-6
+              shadow-[0_4px_14px_rgba(0,0,0,0.05)]
+              hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]
+              transition-all duration-300
+            ">
+              <div className="flex items-center gap-4 justify-between">
+                <div>
+                  <p className="text-slate-500 text-sm font-medium">Active Products</p>
+                  <div className="flex items-end mt-1 gap-3">
+                    <p className="text-2xl font-semibold text-slate-900">146</p>
+                  </div>
+                </div>
+
+                <div className="
+                  w-14 h-14 rounded-2xl flex items-center justify-center text-3xl
+                  bg-gradient-to-br from-rose-50 to-white border border-rose-100
+                ">
+                  <i className="ri-box-3-line text-rose-600"></i>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div className="relative w-full max-w-xs ml-auto">
+          {/* MONTHLY SALES CHART */}
+          <div className="bg-white rounded-xl p-6 shadow-[0_4px_14px_rgba(0,0,0,0.05)]">
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-lg font-semibold text-slate-900">
+                Sales Overview
+              </p>
+
+              {/* FILTER BUTTONS */}
+              <div className="inline-flex items-center bg-gray-100 p-1 rounded-lg">
+                {[
+                  { key: "today", label: "Today" },
+                  { key: "this_week", label: "This Week" },
+                  { key: "last_week", label: "Last Week" },
+                  { key: "monthly", label: "Monthly" },
+                ].map((btn) => (
+                  <button
+                    key={btn.key}
+                    onClick={() => setFilter(btn.key)}
+                    className={`px-4 py-1.5 text-sm rounded-md font-medium transition-all ${filter === btn.key
+                        ? "bg-white shadow-sm text-blue-900"
+                        : "text-gray-600 hover:text-gray-800"
+                      }`}>
+                    {btn.label}
+                  </button>
+                ))}
+              </div>
+
+            </div>
+
+            <ReactApexChart
+              options={barOptions}
+              series={barSeries}
+              type="bar"
+              height={260}
+            />
+          </div>
+
+        </div>
+
+        {/* RIGHT SIDE — Your Target Gauge will go here later */}
+
+      </div>
+
+      {/* -------------------- DATA TABLE -------------------- */}
+      <div className="bg-white rounded-xl p-6
+              shadow-[0_4px_14px_rgba(0,0,0,0.05)]
+              hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]">
+
+        {/* TOP CONTROLS */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-5">
+
+          {/* SHOW ENTRIES */}
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-slate-600">Show</span>
+
+            <select
+              value={entries}
+              onChange={(e) => setEntries(Number(e.target.value))}
+              className="border border-slate-300 rounded-xl px-3 py-1.5
+              text-sm text-slate-700 focus:ring-2 focus:ring-indigo-200 outline-none"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+
+            <span className="text-slate-600">entries</span>
+          </div>
+
+          {/* SEARCH */}
+          <div className="relative w-full md:w-64">
             <input
               type="text"
-              placeholder="Search…"
-              className="w-full rounded-lg border border-slate-300 px-3 py-1.5 pr-9 text-sm focus:ring-2 focus:ring-[#EA6B23]/30 focus:outline-none"
+              placeholder="Search invoices…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full border border-slate-300 rounded-xl px-4 py-2 pr-10
+              text-sm text-slate-700 focus:ring-2 focus:ring-indigo-200 outline-none"
             />
-            <i className="ri-search-line absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]" />
+            <i className="ri-search-line absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
           </div>
+
         </div>
 
         {/* TABLE */}
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/60">
-                <th className="py-3 px-4 text-left text-xs font-semibold text-slate-500">
-                  Invoice ID
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-slate-500">
-                  Customer
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-slate-500">
-                  Phone
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-slate-500">
-                  Amount
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-slate-500">
-                  Status
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-slate-500">
-                  Date &amp; Time
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-slate-500">
-                  Actions
-                </th>
+              <tr className="bg-slate-200 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wide">
+                <th className="py-3 px-4 text-left">Invoice ID</th>
+                <th className="py-3 px-4 text-left">Customer</th>
+                <th className="py-3 px-4 text-left">Phone</th>
+                <th className="py-3 px-4 text-left">Amount</th>
+                <th className="py-3 px-4 text-left">Status</th>
+                <th className="py-3 px-4 text-left">Date</th>
+                <th className="py-3 px-4 text-left">Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {invoices.map((inv) => (
-                <tr
-                  key={inv.id}
-                  className="border-b border-slate-100 hover:bg-slate-50/60 transition"
-                >
-                  <td className="py-3 px-4 font-medium text-slate-800">
-                    {inv.id}
-                  </td>
-                  <td className="py-3 px-4 text-slate-700">{inv.customer}</td>
-                  <td className="py-3 px-4 text-slate-500 font-medium">
-                    {inv.phone}
-                  </td>
-                  <td className="py-3 px-4 font-semibold text-slate-900">
-                    {inv.amount}
-                  </td>
+              {filteredInvoices.slice(0, entries).map((inv) => (
+                <tr key={inv.id} className="border-b border-slate-100 hover:bg-slate-50/60 transition">
+                  <td className="py-3 px-4 font-medium text-slate-800">{inv.id}</td>
+                  <td className="py-3 px-4">{inv.customer}</td>
+                  <td className="py-3 px-4 text-slate-500">{inv.phone}</td>
+                  <td className="py-3 px-4 font-semibold">{inv.amount}</td>
+
                   <td className="py-3 px-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        inv.status === "Paid"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-rose-50 text-rose-600"
-                      }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${inv.status === "Paid"
+                        ? "bg-emerald-50 text-emerald-600"
+                        : "bg-rose-50 text-rose-600"
+                        }`}
                     >
                       {inv.status}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-600">
-                    {inv.date}
-                    <span className="text-slate-400 ml-1">• {inv.time}</span>
+
+                  <td className="py-3 px-4 text-slate-500">
+                    {inv.date} <span className="text-slate-400">• {inv.time}</span>
                   </td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-3 text-lg">
-                      {/* PRINT */}
-                      <button
-                        type="button"
-                        className="text-slate-500 hover:text-slate-800"
-                        title="Print"
-                      >
-                        <i className="ri-printer-line" />
-                      </button>
 
-                      {/* WHATSAPP */}
-                      <button
-                        type="button"
-                        className="text-green-600 hover:text-green-700"
-                        title="Send WhatsApp"
-                      >
-                        <i className="ri-whatsapp-line" />
-                      </button>
-
-                      {/* SMS */}
-                      <button
-                        type="button"
-                        className="text-blue-500 hover:text-blue-600"
-                        title="Send SMS"
-                      >
-                        <i className="ri-message-2-line" />
-                      </button>
-
-                      {/* VIEW */}
-                      <button
-                        type="button"
-                        className="text-[#EA6B23] hover:text-[#c9561b]"
-                        title="View details"
-                      >
-                        <i className="ri-eye-line" />
-                      </button>
-                    </div>
+                  <td className="py-3 px-4 flex items-center gap-4 text-lg">
+                    <i className="ri-printer-line text-slate-500 hover:text-slate-800 cursor-pointer"></i>
+                    <i className="ri-whatsapp-line text-green-600 hover:text-green-700 cursor-pointer"></i>
+                    <i className="ri-message-2-line text-blue-500 hover:text-blue-600 cursor-pointer"></i>
+                    <i className="ri-eye-line text-orange-500 hover:text-orange-600 cursor-pointer"></i>
                   </td>
+
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
+
       </div>
+
     </div>
   );
 }

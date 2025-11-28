@@ -85,7 +85,7 @@ export default function Login() {
         </div>
 
         <div className="w-full max-w-sm">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center mt-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
             Login To Your Account
           </h2>
 

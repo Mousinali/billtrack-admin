@@ -22,7 +22,7 @@ export default function Topbar() {
   }, []);
 
   return (
-    <header className="h-16 border-b border-slate-400 bg-white/70 backdrop-blur flex items-center justify-between px-4 md:px-6 relative">
+    <header className="h-16 border-b border-slate-200 bg-white/70 backdrop-blur flex items-center justify-between px-4 md:px-6 relative">
       <div className="flex items-center gap-3">
 
         {/* Mobile Title */}
@@ -70,8 +70,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
         {/* NOTIFICATION DROPDOWN */}
         {openNotif && (
           <div
-            className="absolute right-64 top-14 w-80 bg-white shadow-lg border border-slate-200 
-    rounded-xl p-4 z-50 animate-fadeIn"
+            className="absolute right-64 top-14 w-80 bg-white shadow-lg border border-slate-200 rounded-xl p-4 z-[9999] animate-fadeIn"
           >
             {/* HEADER */}
             <div className="flex items-center justify-between mb-3 border-b border-slate-200 pb-3">
@@ -117,7 +116,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
             </div>
 
             {/* FOOTER */}
-            <button className="w-full font-semibold text-sm bg-[#EA6B23]/10 py-3 text-[#EA6B23] font-medium mt-4 hover:underline">
+            <button className="w-full text-sm bg-[#EA6B23]/10 py-3 text-[#EA6B23] font-medium mt-4 hover:underline">
               View all notifications
             </button>
           </div>
