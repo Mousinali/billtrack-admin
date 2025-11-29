@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import { useNavigate } from "react-router-dom";
+import DataTable from "react-data-table-component";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -45,15 +46,136 @@ export default function Dashboard() {
     },
   ];
 
-  // ------------------ TABLE LOGIC ------------------
   const [search, setSearch] = useState("");
-  const [entries, setEntries] = useState(10);
 
-  const filteredInvoices = invoices.filter((inv) =>
-    inv.customer.toLowerCase().includes(search.toLowerCase()) ||
-    inv.phone.includes(search) ||
-    inv.id.toLowerCase().includes(search.toLowerCase())
+  const filteredData = invoices.filter(
+    (item) =>
+      item.customer.toLowerCase().includes(search.toLowerCase()) ||
+      item.phone.includes(search) ||
+      item.id.toLowerCase().includes(search.toLowerCase())
   );
+
+  const columns = [
+    {
+      name: "Invoice ID",
+      selector: (row) => row.id,
+      sortable: true,
+    },
+    {
+      name: "Customer",
+      selector: (row) => row.customer,
+      sortable: true,
+      cell: (row) => (
+        <div className="flex items-center gap-2">
+          <span>{row.customer}</span>
+        </div>
+      ),
+    },
+    {
+      name: "Phone",
+      selector: (row) => row.phone,
+      sortable: true,
+    },
+    {
+      name: "Amount",
+      selector: (row) => row.amount,
+      sortable: true,
+    },
+    {
+      name: "Status",
+      selector: (row) => row.status,
+      sortable: true,
+      cell: (row) => (
+        <span
+          className={`px-3 py-1 rounded-full text-sm ${row.status === "Paid"
+            ? "bg-green-100 text-green-600"
+            : "bg-red-100 text-red-600"
+            }`}
+        >
+          {row.status}
+        </span>
+      ),
+    },
+    {
+      name: "Date",
+      selector: (row) => row.date,
+      sortable: true,
+    },
+    {
+      name: "Time",
+      selector: (row) => row.time,
+      sortable: true,
+    },
+  ];
+
+  // Custom Styles — matches screenshot
+  const customStyles = {
+    table: {
+      style: {
+        borderRadius: "14px",
+        overflow: "hidden",
+        border: "1px solid #e5e7eb", // soft border
+      },
+    },
+
+    head: {
+      style: {
+        backgroundColor: "#f8fafc", // soft blue/gray background
+        borderBottom: "1px solid #e2e8f0",
+        minHeight: "48px",
+      },
+    },
+
+    headCells: {
+      style: {
+        justifyContent: "space-between",
+        display: "flex",
+        alignItems: "center",
+        fontWeight: "600",
+        fontSize: "14px",
+        color: "#334155",
+        paddingTop: "14px",
+        paddingBottom: "14px",
+      },
+    },
+
+    rows: {
+      style: {
+        minHeight: "60px",
+        fontSize: "15px",
+        borderBottom: "1px solid #f1f5f9",
+      },
+    },
+
+    cells: {
+      style: {
+        paddingTop: "12px",
+        paddingBottom: "12px",
+        color: "#475569",
+      },
+    },
+
+    highlightOnHoverStyle: {
+      backgroundColor: "#eef6ff",
+      borderBottomColor: "#e2e8f0",
+    },
+  };
+
+
+  const SortIcon = () => {
+    return (
+      <span className="flex flex-col items-center justify-center ml-1 leading-none">
+        {/* Up arrow */}
+        <span className="triangle-up" />
+
+        {/* Down arrow */}
+        <span className="triangle-down mt-[2px]" />
+      </span>
+    );
+  };
+
+
+
 
   // ------------------ CREATE INVOICE SHORTCUT ------------------
   const goToCreateInvoice = () => navigate("/create-invoice");
@@ -154,9 +276,11 @@ export default function Dashboard() {
 
         <button
           onClick={goToCreateInvoice}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm flex items-center gap-2"
+          className="Btn"
         >
-          Create Invoice <i className="ri-add-line"></i>
+          <div className="text">
+            Create Invoice <i className="ri-add-line"></i>
+          </div>
         </button>
       </div>
 
@@ -276,8 +400,8 @@ export default function Dashboard() {
                     key={btn.key}
                     onClick={() => setFilter(btn.key)}
                     className={`px-4 py-1.5 text-sm rounded-md font-medium transition-all ${filter === btn.key
-                        ? "bg-white shadow-sm text-blue-900"
-                        : "text-gray-600 hover:text-gray-800"
+                      ? "bg-white shadow-sm text-blue-900"
+                      : "text-gray-600 hover:text-gray-800"
                       }`}>
                     {btn.label}
                   </button>
@@ -304,95 +428,39 @@ export default function Dashboard() {
       <div className="bg-white rounded-xl p-6
               shadow-[0_4px_14px_rgba(0,0,0,0.05)]
               hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]">
-
-        {/* TOP CONTROLS */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-5">
-
-          {/* SHOW ENTRIES */}
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-slate-600">Show</span>
-
-            <select
-              value={entries}
-              onChange={(e) => setEntries(Number(e.target.value))}
-              className="border border-slate-300 rounded-xl px-3 py-1.5
-              text-sm text-slate-700 focus:ring-2 focus:ring-indigo-200 outline-none"
-            >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
+        <div className="p-6">
+          {/* Top Controls */}
+          <div className="flex justify-between items-center mb-4">
+            <select className="border rounded-lg px-3 py-2">
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
             </select>
 
-            <span className="text-slate-600">entries</span>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="border rounded-lg px-4 py-2 w-64"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <i className="ri-search-line absolute right-3 top-2 text-gray-400"></i>
+            </div>
           </div>
 
-          {/* SEARCH */}
-          <div className="relative w-full md:w-64">
-            <input
-              type="text"
-              placeholder="Search invoices…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-slate-300 rounded-xl px-4 py-2 pr-10
-              text-sm text-slate-700 focus:ring-2 focus:ring-indigo-200 outline-none"
-            />
-            <i className="ri-search-line absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          </div>
+          <DataTable
+            columns={columns}
+            data={filteredData}
+            customStyles={customStyles}
+            pagination
+            highlightOnHover
+            sortIcon={<SortIcon />}
+          />
+
+
 
         </div>
-
-        {/* TABLE */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="bg-slate-200 border-b border-slate-200 text-slate-600 text-xs uppercase tracking-wide">
-                <th className="py-3 px-4 text-left">Invoice ID</th>
-                <th className="py-3 px-4 text-left">Customer</th>
-                <th className="py-3 px-4 text-left">Phone</th>
-                <th className="py-3 px-4 text-left">Amount</th>
-                <th className="py-3 px-4 text-left">Status</th>
-                <th className="py-3 px-4 text-left">Date</th>
-                <th className="py-3 px-4 text-left">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredInvoices.slice(0, entries).map((inv) => (
-                <tr key={inv.id} className="border-b border-slate-100 hover:bg-slate-50/60 transition">
-                  <td className="py-3 px-4 font-medium text-slate-800">{inv.id}</td>
-                  <td className="py-3 px-4">{inv.customer}</td>
-                  <td className="py-3 px-4 text-slate-500">{inv.phone}</td>
-                  <td className="py-3 px-4 font-semibold">{inv.amount}</td>
-
-                  <td className="py-3 px-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${inv.status === "Paid"
-                        ? "bg-emerald-50 text-emerald-600"
-                        : "bg-rose-50 text-rose-600"
-                        }`}
-                    >
-                      {inv.status}
-                    </span>
-                  </td>
-
-                  <td className="py-3 px-4 text-slate-500">
-                    {inv.date} <span className="text-slate-400">• {inv.time}</span>
-                  </td>
-
-                  <td className="py-3 px-4 flex items-center gap-4 text-lg">
-                    <i className="ri-printer-line text-slate-500 hover:text-slate-800 cursor-pointer"></i>
-                    <i className="ri-whatsapp-line text-green-600 hover:text-green-700 cursor-pointer"></i>
-                    <i className="ri-message-2-line text-blue-500 hover:text-blue-600 cursor-pointer"></i>
-                    <i className="ri-eye-line text-orange-500 hover:text-orange-600 cursor-pointer"></i>
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-        </div>
-
       </div>
 
     </div>

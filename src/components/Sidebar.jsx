@@ -114,7 +114,7 @@ export default function Sidebar() {
 
         {/* INVOICE */}
         <NavLink
-          to="/invoice"
+          to="/invoice-list"
           className={({ isActive }) =>
             `${item} ${
               isActive
@@ -125,7 +125,23 @@ export default function Sidebar() {
         >
           <div className={leftItem}>
             <i className="ri-file-text-line text-lg mt-0.5"></i>
-            <span>Invoice</span>
+            <span>Invoice List</span>
+          </div>
+        </NavLink>
+        {/* CREATE INVOICE */}
+        <NavLink
+          to="/create-invoice"
+          className={({ isActive }) =>
+            `${item} ${
+              isActive
+                ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
+                : "hover:bg-slate-100 text-slate-700 border border-transparent"
+            }`
+          }
+        >
+          <div className={leftItem}>
+            <i className="ri-file-add-line text-lg mt-0.5"></i>
+            <span>Create Invoice</span>
           </div>
         </NavLink>
 
