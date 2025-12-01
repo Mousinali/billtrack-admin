@@ -6,6 +6,28 @@ export default function Topbar() {
   const { user, logout } = useAuth();
 
   const [openNotif, setOpenNotif] = useState(false);
+
+  // REFS
+  const notifRef = useRef(null);
+  const notifBtnRef = useRef(null);
+
+  // CLICK OUTSIDE HANDLER
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (
+        openNotif &&
+        notifRef.current &&
+        !notifRef.current.contains(e.target) &&
+        notifBtnRef.current &&
+        !notifBtnRef.current.contains(e.target)
+      ) {
+        setOpenNotif(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openNotif]);
   const searchRef = useRef(null);
 
   // CTRL + K → Focus Search
@@ -22,7 +44,7 @@ export default function Topbar() {
   }, []);
 
   return (
-    <header className="h-16 border-b border-slate-200 bg-white/70 backdrop-blur flex items-center justify-between px-4 md:px-6 relative">
+    <header className="h-16 border-b border-slate-200 bg-white/70 backdrop-blur flex items-center justify-between px-4 md:px-6 relative z-[99999]">
       <div className="flex items-center gap-3">
 
         {/* Mobile Title */}
@@ -56,6 +78,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
 
         {/* NOTIFICATION BUTTON */}
         <button
+          ref={notifBtnRef}
           onClick={() => setOpenNotif(!openNotif)}
           className="relative text-xl hover:text-[#EA6B23] transition"
         >
@@ -67,23 +90,24 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
           </span>
         </button>
 
-        {/* NOTIFICATION DROPDOWN */}
+        {/* DROPDOWN */}
         {openNotif && (
           <div
-            className="absolute right-64 top-14 w-80 bg-white shadow-lg border border-slate-200 rounded-xl p-4 z-[9999] animate-fadeIn"
+            ref={notifRef}
+            className="absolute right-60 top-14 w-80 bg-white shadow-lg border border-slate-200 rounded-xl p-4 `z-[9999]` animate-fadeIn"
           >
             {/* HEADER */}
             <div className="flex items-center justify-between mb-3 border-b border-slate-200 pb-3">
               <h3 className="text-sm font-semibold text-slate-800">Notifications</h3>
-              <span className="text-xs bg-red-300/20  text-red-600 font-semibold px-2 py-1 rounded-sm">
+              <span className="text-xs bg-red-300/20 text-red-600 font-semibold px-2 py-1 rounded-sm">
                 3 New
               </span>
             </div>
 
             {/* LIST */}
-            <div className="">
+            <div>
 
-              {/* ITEM */}
+              {/* ITEM 1 */}
               <div className="flex items-start gap-3 pb-3.5 hover:bg-slate-50 transition cursor-pointer border-b border-slate-300">
                 <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-lg ">
                   <i className="ri-file-list-3-line"></i>
@@ -94,6 +118,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
                 </div>
               </div>
 
+              {/* ITEM 2 */}
               <div className="flex items-start gap-3 py-3.5 hover:bg-slate-50 transition cursor-pointer border-b border-slate-300">
                 <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-lg ">
                   <i className="ri-vip-crown-line"></i>
@@ -104,6 +129,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
                 </div>
               </div>
 
+              {/* ITEM 3 */}
               <div className="flex items-start gap-3 pt-3.5 hover:bg-slate-50 transition cursor-pointer">
                 <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-lg ">
                   <i className="ri-user-add-line"></i>
@@ -113,6 +139,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
                   <p className="text-xs text-slate-500">Yesterday</p>
                 </div>
               </div>
+
             </div>
 
             {/* FOOTER */}
@@ -121,6 +148,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
             </button>
           </div>
         )}
+
 
 
         {/* USER DETAILS */}

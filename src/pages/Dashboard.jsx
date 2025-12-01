@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 
 export default function Dashboard() {
@@ -112,7 +112,6 @@ export default function Dashboard() {
   const customStyles = {
     table: {
       style: {
-        borderRadius: "14px",
         overflow: "hidden",
         border: "1px solid #e5e7eb", // soft border
       },
@@ -120,9 +119,8 @@ export default function Dashboard() {
 
     head: {
       style: {
-        backgroundColor: "#f8fafc", // soft blue/gray background
-        borderBottom: "1px solid #e2e8f0",
-        minHeight: "48px",
+        backgroundColor: "#f8fafc",
+        minHeight: "46px",
       },
     },
 
@@ -136,12 +134,13 @@ export default function Dashboard() {
         color: "#334155",
         paddingTop: "14px",
         paddingBottom: "14px",
+        backgroundColor: "#e9e8ff",
       },
     },
 
     rows: {
       style: {
-        minHeight: "60px",
+        minHeight: "54px",
         fontSize: "15px",
         borderBottom: "1px solid #f1f5f9",
       },
@@ -169,7 +168,7 @@ export default function Dashboard() {
         <span className="triangle-up" />
 
         {/* Down arrow */}
-        <span className="triangle-down mt-[2px]" />
+        <span className="triangle-down mt-1" />
       </span>
     );
   };
@@ -262,6 +261,58 @@ export default function Dashboard() {
     { name: filter === "today" ? "Hourly Sales" : "Daily Sales", data: data },
   ];
 
+  // ------------------ SUBSCRIPTION GAUGE ------------------
+  const totalDays = 365;
+  const usedDays = 90;
+  const remainingDays = totalDays - usedDays;
+  const percent = (remainingDays / totalDays) * 100;
+
+
+const gaugeOptions = {
+  chart: {
+    type: "radialBar",
+    toolbar: { show: false },
+  },
+
+  plotOptions: {
+    radialBar: {
+      startAngle: -135,
+      endAngle: 135,
+      hollow: {
+        size: "60%",
+      },
+      track: {
+        background: "#e2e8f0",
+        strokeWidth: "100%",
+      },
+      dataLabels: {
+        name: { show: false },
+        value: {
+          show: true,
+          fontSize: "28px",
+          fontWeight: "700",
+          color: "#1e293b",
+          offsetY: 8,
+          formatter: () => `${remainingDays} Days`,
+        },
+      },
+    },
+  },
+
+  fill: {
+    type: "gradient",
+    gradient: {
+      shade: "light",
+      gradientToColors: ["#6366f1"],
+      stops: [0, 100],
+    },
+    colors: ["#4f46e5"],
+  },
+
+  stroke: { lineCap: "round" },
+};
+
+const gaugeSeries = [percent];
 
 
   return (
@@ -284,10 +335,10 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* --------- TOP LAYOUT EXACT LIKE IMAGE ---------- */}
+      {/* --------- Overview ---------- */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-        {/* LEFT SIDE: Revenue + Orders + Monthly Sales */}
+        {/* LEFT SIDE: Revenue + Invoice + Active Products */}
         <div className="col-span-2 space-y-6">
 
           {/* Revenue + Orders */}
@@ -420,34 +471,110 @@ export default function Dashboard() {
 
         </div>
 
-        {/* RIGHT SIDE — Your Target Gauge will go here later */}
+        {/* Subscription overview */}
+        <div className="bg-white p-6 rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.05)]
+              hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]
+              transition-all space-y-4">
+
+          <p className="text-lg font-semibold text-slate-900">
+            Subscription Status
+          </p>
+
+          <ReactApexChart
+            options={gaugeOptions}
+            series={gaugeSeries}
+            type="radialBar"
+            height={235}
+          />
+
+          {/* Remaining Days Text */}
+          <p className="text-center text-slate-600 text-sm -mt-2">
+            Renewal in <span className="font-semibold">{remainingDays} days</span>
+          </p>
+
+          {/* Last 2 Transactions */}
+          <div className="mt-4 bg-orange-50 p-4 rounded-lg">
+            <p className="text-sm font-semibold text-slate-800 mb-2">
+              Last Transactions
+            </p>
+
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-slate-600 text-sm">Subscription Renewed</span>
+              <span className="text-slate-600 text-sm">12 Feb 2024</span>
+              <span className="font-semibold text-green-600 text-sm">₹1999</span>
+            </div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-slate-600 text-sm">Subscription Renewed</span>
+              <span className="text-slate-600 text-sm">18 Feb 2025</span>
+              <span className="font-semibold text-green-600 text-sm">₹1999</span>
+            </div>
+          </div>
+
+        </div>
+
 
       </div>
 
       {/* -------------------- DATA TABLE -------------------- */}
-      <div className="bg-white rounded-xl p-6
+      <div className="bg-white rounded-xl p-6 pb-3
               shadow-[0_4px_14px_rgba(0,0,0,0.05)]
               hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]">
-        <div className="p-6">
+        <div className="p-4 pb-0">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-2xl font-medium">Recent Entries</h2>
+            <Link
+              to="/invoice-list"
+              className="Btn"
+            >
+              <div className="text">
+                Invoice List <i className="ri-list-check"></i>
+              </div>
+            </Link>
+          </div>
           {/* Top Controls */}
-          <div className="flex justify-between items-center mb-4">
-            <select className="border rounded-lg px-3 py-2">
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-            </select>
+          <div className="flex justify-between items-center mb-6">
 
+            {/* Entries Dropdown */}
+            <div className="flex items-center gap-2">
+  <label className="text-sm text-slate-600 font-medium">Show</label>
+
+  <div className="relative">
+    <select
+      className="appearance-none border border-slate-300 bg-white rounded-lg 
+      px-3 py-1.5 pr-8 text-sm text-slate-700 focus:border-blue-500 focus:ring-0 transition cursor-pointer"
+    >
+      <option>10</option>
+      <option>25</option>
+      <option>50</option>
+    </select>
+
+    {/* Custom Arrow */}
+    <i className="ri-arrow-down-s-line absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+  </div>
+
+  <label className="text-sm text-slate-600 font-medium">entries</label>
+</div>
+
+
+            {/* Search Box */}
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search..."
-                className="border rounded-lg px-4 py-2 w-64"
+                className="
+                border border-slate-300 rounded-lg pl-10 pr-4 py-2 w-64 text-sm
+                focus:outline-none focus:ring-0.75 focus:border-blue-500 
+                transition-all
+              "
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <i className="ri-search-line absolute right-3 top-2 text-gray-400"></i>
+              <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
             </div>
+
           </div>
+
+
 
           <DataTable
             columns={columns}
