@@ -108,12 +108,12 @@ export default function Dashboard() {
     },
   ];
 
-  // Custom Styles — matches screenshot
+
   const customStyles = {
     table: {
       style: {
         overflow: "hidden",
-        border: "1px solid #e5e7eb", // soft border
+        border: "1px solid #e5e7eb",
       },
     },
 
@@ -164,10 +164,7 @@ export default function Dashboard() {
   const SortIcon = () => {
     return (
       <span className="flex flex-col items-center justify-center ml-1 leading-none">
-        {/* Up arrow */}
         <span className="triangle-up" />
-
-        {/* Down arrow */}
         <span className="triangle-down mt-1" />
       </span>
     );
@@ -268,52 +265,51 @@ export default function Dashboard() {
   const percent = (remainingDays / totalDays) * 100;
 
 
-const gaugeOptions = {
-  chart: {
-    type: "radialBar",
-    toolbar: { show: false },
-  },
+  const gaugeOptions = {
+    chart: {
+      type: "radialBar",
+      toolbar: { show: false },
+    },
 
-  plotOptions: {
-    radialBar: {
-      startAngle: -135,
-      endAngle: 135,
-      hollow: {
-        size: "60%",
-      },
-      track: {
-        background: "#e2e8f0",
-        strokeWidth: "100%",
-      },
-      dataLabels: {
-        name: { show: false },
-        value: {
-          show: true,
-          fontSize: "28px",
-          fontWeight: "700",
-          color: "#1e293b",
-          offsetY: 8,
-          formatter: () => `${remainingDays} Days`,
+    plotOptions: {
+      radialBar: {
+        startAngle: -135,
+        endAngle: 135,
+        hollow: {
+          size: "60%",
+        },
+        track: {
+          background: "#e2e8f0",
+          strokeWidth: "100%",
+        },
+        dataLabels: {
+          name: { show: false },
+          value: {
+            show: true,
+            fontSize: "28px",
+            fontWeight: "700",
+            color: "#1e293b",
+            offsetY: 8,
+            formatter: () => `${remainingDays} Days`,
+          },
         },
       },
     },
-  },
 
-  fill: {
-    type: "gradient",
-    gradient: {
-      shade: "light",
-      gradientToColors: ["#6366f1"],
-      stops: [0, 100],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        gradientToColors: ["#6366f1"],
+        stops: [0, 100],
+      },
+      colors: ["#4f46e5"],
     },
-    colors: ["#4f46e5"],
-  },
 
-  stroke: { lineCap: "round" },
-};
+    stroke: { lineCap: "round" },
+  };
 
-const gaugeSeries = [percent];
-
+  const gaugeSeries = [percent];
 
   return (
     <div className="space-y-8">
@@ -536,24 +532,24 @@ const gaugeSeries = [percent];
 
             {/* Entries Dropdown */}
             <div className="flex items-center gap-2">
-  <label className="text-sm text-slate-600 font-medium">Show</label>
+              <label className="text-sm text-slate-600 font-medium">Show</label>
 
-  <div className="relative">
-    <select
-      className="appearance-none border border-slate-300 bg-white rounded-lg 
-      px-3 py-1.5 pr-8 text-sm text-slate-700 focus:border-blue-500 focus:ring-0 transition cursor-pointer"
-    >
-      <option>10</option>
-      <option>25</option>
-      <option>50</option>
-    </select>
+              <div className="relative">
+                <select
+                  className="appearance-none border border-slate-300 bg-white rounded-lg 
+                  px-3 py-1.5 pr-8 text-sm text-slate-700 focus:border-blue-500 focus:ring-0 transition cursor-pointer"
+                >
+                  <option>10</option>
+                  <option>25</option>
+                  <option>50</option>
+                </select>
 
-    {/* Custom Arrow */}
-    <i className="ri-arrow-down-s-line absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
-  </div>
+                {/* Custom Arrow */}
+                <i className="ri-arrow-down-s-line absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+              </div>
 
-  <label className="text-sm text-slate-600 font-medium">entries</label>
-</div>
+              <label className="text-sm text-slate-600 font-medium">entries</label>
+            </div>
 
 
             {/* Search Box */}
@@ -584,9 +580,7 @@ const gaugeSeries = [percent];
             highlightOnHover
             sortIcon={<SortIcon />}
           />
-
-
-
+          
         </div>
       </div>
 
