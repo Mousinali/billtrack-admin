@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import ReactApexChart from "react-apexcharts";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
+import SalesChart from "../components/salesChart";
+import SubscriptionChart from "../components/SubscriptionChart";
 
 export default function Dashboard() {
-  const navigate = useNavigate();
+
 
   // ------------------ INVOICE DATA ------------------
   const invoices = [
@@ -12,37 +13,37 @@ export default function Dashboard() {
       id: "INV-20241",
       customer: "Rahul Sharma",
       phone: "6290397299",
-      amount: "₹1,200",
-      status: "Paid",
       date: "21 Feb 2025",
       time: "11:32 AM",
+      status: "Paid",
+      amount: "1,200.00",
     },
     {
       id: "INV-20242",
       customer: "Neha Patel",
       phone: "7001239870",
-      amount: "₹900",
-      status: "Unpaid",
       date: "21 Feb 2025",
       time: "10:12 AM",
+      status: "Unpaid",
+      amount: "900.00",
     },
     {
       id: "INV-20243",
       customer: "Arjun Singh",
       phone: "9087654210",
-      amount: "₹2,450",
-      status: "Paid",
       date: "20 Feb 2025",
       time: "05:44 PM",
+      status: "Paid",
+      amount: "2,450.00",
     },
     {
       id: "INV-20244",
       customer: "Priya Das",
       phone: "7896541230",
-      amount: "₹780",
-      status: "Unpaid",
       date: "20 Feb 2025",
       time: "03:20 PM",
+      status: "Unpaid",
+      amount: "780.00",
     },
   ];
 
@@ -77,8 +78,13 @@ export default function Dashboard() {
       sortable: true,
     },
     {
-      name: "Amount",
-      selector: (row) => row.amount,
+      name: "Date",
+      selector: (row) => row.date,
+      sortable: true,
+    },
+    {
+      name: "Time",
+      selector: (row) => row.time,
       sortable: true,
     },
     {
@@ -97,15 +103,35 @@ export default function Dashboard() {
       ),
     },
     {
-      name: "Date",
-      selector: (row) => row.date,
+      name: "Amount",
+      selector: (row) => row.amount,
       sortable: true,
+      style: {
+        justifyContent: "flex-end",
+      },
+      cell: (row) => (
+        <span className="text-end">
+          {row.amount}
+        </span>
+      ),
     },
     {
-      name: "Time",
-      selector: (row) => row.time,
-      sortable: true,
+      name: "Action",
+      cell: () => (
+        <div className="flex items-center gap-3 text-xl">
+
+          <i className="ri-printer-line text-red-600 hover:text-red-800 cursor-pointer"></i>
+
+          <i className="ri-message-2-line text-blue-600 hover:text-blue-800 cursor-pointer"></i>
+
+          <i className="ri-whatsapp-line text-green-600 hover:text-green-800 cursor-pointer"></i>
+
+          <i className="ri-eye-line text-gray-700 hover:text-indigo-600 cursor-pointer"></i>
+
+        </div>
+      ),
     },
+
   ];
 
 
@@ -160,7 +186,6 @@ export default function Dashboard() {
     },
   };
 
-
   const SortIcon = () => {
     return (
       <span className="flex flex-col items-center justify-center ml-1 leading-none">
@@ -173,143 +198,6 @@ export default function Dashboard() {
 
 
 
-  // ------------------ CREATE INVOICE SHORTCUT ------------------
-  const goToCreateInvoice = () => navigate("/create-invoice");
-
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.shiftKey && e.key.toLowerCase() === "c") {
-        e.preventDefault();
-        goToCreateInvoice();
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, []);
-
-  // ------------------ BAR CHART ------------------
-  const [filter, setFilter] = useState("monthly");
-
-  // -------------------------------
-  // MONTHLY (30 days)
-  // -------------------------------
-  const monthlyDays = Array.from({ length: 30 }, (_, i) => `${i + 1}`);
-  const monthlyData = [
-    120, 95, 140, 160, 110, 180, 200, 90, 130, 150,
-    170, 210, 190, 100, 125, 160, 230, 95, 80, 260,
-    300, 210, 190, 130, 170, 200, 220, 250, 180, 140
-  ];
-
-  // -------------------------------
-  // HOURLY DATA (Today - 24 hours)
-  // -------------------------------
-  const hourlyLabels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
-  const hourlyData = Array.from({ length: 24 }, () =>
-    Math.floor(Math.random() * 100) + 20
-  );
-
-  // FILTER RESULTS
-  let labels = [];
-  let data = [];
-
-  // TODAY (Hourly)
-  if (filter === "today") {
-    labels = hourlyLabels;
-    data = hourlyData;
-  }
-
-  // THIS WEEK (last 7 days)
-  if (filter === "this_week") {
-    labels = monthlyDays.slice(-7);
-    data = monthlyData.slice(-7);
-  }
-
-  // LAST WEEK (previous 7 days)
-  if (filter === "last_week") {
-    labels = monthlyDays.slice(-14, -7);
-    data = monthlyData.slice(-14, -7);
-  }
-
-  // MONTHLY (all days)
-  if (filter === "monthly") {
-    labels = monthlyDays;
-    data = monthlyData;
-  }
-
-  // -------------------------------
-  // CHART OPTIONS
-  // -------------------------------
-  const barOptions = {
-    chart: { type: "bar", toolbar: { show: false } },
-    colors: ["#4F46E5"],
-    plotOptions: {
-      bar: { borderRadius: 5, columnWidth: filter === "today" ? "60%" : "40%" },
-    },
-    dataLabels: { enabled: false },
-    xaxis: {
-      categories: labels,
-      labels: { style: { colors: "#94A3B8", fontSize: filter === "today" ? "10px" : "12px" } },
-    },
-    yaxis: { labels: { style: { colors: "#94A3B8" } } },
-    grid: { borderColor: "#E2E8F0" },
-  };
-
-  const barSeries = [
-    { name: filter === "today" ? "Hourly Sales" : "Daily Sales", data: data },
-  ];
-
-  // ------------------ SUBSCRIPTION GAUGE ------------------
-  const totalDays = 365;
-  const usedDays = 90;
-  const remainingDays = totalDays - usedDays;
-  const percent = (remainingDays / totalDays) * 100;
-
-
-  const gaugeOptions = {
-    chart: {
-      type: "radialBar",
-      toolbar: { show: false },
-    },
-
-    plotOptions: {
-      radialBar: {
-        startAngle: -135,
-        endAngle: 135,
-        hollow: {
-          size: "60%",
-        },
-        track: {
-          background: "#e2e8f0",
-          strokeWidth: "100%",
-        },
-        dataLabels: {
-          name: { show: false },
-          value: {
-            show: true,
-            fontSize: "28px",
-            fontWeight: "700",
-            color: "#1e293b",
-            offsetY: 8,
-            formatter: () => `${remainingDays} Days`,
-          },
-        },
-      },
-    },
-
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "light",
-        gradientToColors: ["#6366f1"],
-        stops: [0, 100],
-      },
-      colors: ["#4f46e5"],
-    },
-
-    stroke: { lineCap: "round" },
-  };
-
-  const gaugeSeries = [percent];
 
   return (
     <div className="space-y-8">
@@ -321,14 +209,14 @@ export default function Dashboard() {
           <p className="text-sm text-slate-500">Overview of your business performance.</p>
         </div>
 
-        <button
-          onClick={goToCreateInvoice}
+        <Link
+          to="/create-invoice"
           className="Btn"
         >
           <div className="text">
             Create Invoice <i className="ri-add-line"></i>
           </div>
-        </button>
+        </Link>
       </div>
 
       {/* --------- Overview ---------- */}
@@ -429,84 +317,13 @@ export default function Dashboard() {
           </div>
 
           {/* MONTHLY SALES CHART */}
-          <div className="bg-white rounded-xl p-6 shadow-[0_4px_14px_rgba(0,0,0,0.05)]">
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-lg font-semibold text-slate-900">
-                Sales Overview
-              </p>
-
-              {/* FILTER BUTTONS */}
-              <div className="inline-flex items-center bg-gray-100 p-1 rounded-lg">
-                {[
-                  { key: "today", label: "Today" },
-                  { key: "this_week", label: "This Week" },
-                  { key: "last_week", label: "Last Week" },
-                  { key: "monthly", label: "Monthly" },
-                ].map((btn) => (
-                  <button
-                    key={btn.key}
-                    onClick={() => setFilter(btn.key)}
-                    className={`px-4 py-1.5 text-sm rounded-md font-medium transition-all ${filter === btn.key
-                      ? "bg-white shadow-sm text-blue-900"
-                      : "text-gray-600 hover:text-gray-800"
-                      }`}>
-                    {btn.label}
-                  </button>
-                ))}
-              </div>
-
-            </div>
-
-            <ReactApexChart
-              options={barOptions}
-              series={barSeries}
-              type="bar"
-              height={260}
-            />
-          </div>
+          <SalesChart />
 
         </div>
 
         {/* Subscription overview */}
-        <div className="bg-white p-6 rounded-xl shadow-[0_4px_14px_rgba(0,0,0,0.05)]
-              hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]
-              transition-all space-y-4">
-
-          <p className="text-lg font-semibold text-slate-900">
-            Subscription Status
-          </p>
-
-          <ReactApexChart
-            options={gaugeOptions}
-            series={gaugeSeries}
-            type="radialBar"
-            height={235}
-          />
-
-          {/* Remaining Days Text */}
-          <p className="text-center text-slate-600 text-sm -mt-2">
-            Renewal in <span className="font-semibold">{remainingDays} days</span>
-          </p>
-
-          {/* Last 2 Transactions */}
-          <div className="mt-4 bg-orange-50 p-4 rounded-lg">
-            <p className="text-sm font-semibold text-slate-800 mb-2">
-              Last Transactions
-            </p>
-
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-slate-600 text-sm">Subscription Renewed</span>
-              <span className="text-slate-600 text-sm">12 Feb 2024</span>
-              <span className="font-semibold text-green-600 text-sm">₹1999</span>
-            </div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-slate-600 text-sm">Subscription Renewed</span>
-              <span className="text-slate-600 text-sm">18 Feb 2025</span>
-              <span className="font-semibold text-green-600 text-sm">₹1999</span>
-            </div>
-          </div>
-
-        </div>
+        <SubscriptionChart />
+        
 
 
       </div>
@@ -515,7 +332,7 @@ export default function Dashboard() {
       <div className="bg-white rounded-xl p-6 pb-3
               shadow-[0_4px_14px_rgba(0,0,0,0.05)]
               hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]">
-        <div className="p-4 pb-0">
+        <div className="pb-0">
           <div className="mb-5 flex items-center justify-between">
             <h2 className="text-2xl font-medium">Recent Entries</h2>
             <Link
@@ -580,7 +397,7 @@ export default function Dashboard() {
             highlightOnHover
             sortIcon={<SortIcon />}
           />
-          
+
         </div>
       </div>
 

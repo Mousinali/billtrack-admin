@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 import Layout from "./Layout";
@@ -9,15 +9,19 @@ import Settings from "../pages/Settings";
 import Invoice from "../pages/Invoicelist";
 import Createinvoice from "../pages/Createinvoice";
 
+
+
+
 export default function AppRouter() {
+
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* PUBLIC ROUTE */}
+          {/* PUBLIC */}
           <Route path="/login" element={<Login />} />
 
-          {/* PROTECTED ROUTES */}
+          {/* PROTECTED */}
           <Route
             path="/"
             element={
