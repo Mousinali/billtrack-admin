@@ -10,7 +10,7 @@ import ReactApexChart from "react-apexcharts";
 export default function SubscriptionChart() {
     // ------------------ SUBSCRIPTION GAUGE ------------------
     const totalDays = 365;
-    const usedDays = 65;
+    const usedDays = 69;
     const remainingDays = totalDays - usedDays;
     const percent = (remainingDays / totalDays) * 100;
 

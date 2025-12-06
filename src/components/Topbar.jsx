@@ -44,7 +44,7 @@ export default function Topbar() {
   }, []);
 
   return (
-    <header className="h-16 border-b border-slate-200 bg-white/70 backdrop-blur flex items-center justify-between px-4 md:px-6 relative z-[99999]">
+    <header className="h-16 border-b border-slate-200 bg-white/70 backdrop-blur flex items-center justify-between px-4 md:px-6 relative z-[99]">
       <div className="flex items-center gap-3">
 
         {/* Mobile Title */}

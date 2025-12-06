@@ -1,9 +1,18 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+
 import adminLogo from "../assets/logo/favicon.png";
 
 export default function Sidebar() {
   const [openProducts, setOpenProducts] = useState(false);
+
+  const location = useLocation();
+  const isProductsRoute = location.pathname.startsWith("/products");
+
+
+  useEffect(() => {
+    if (isProductsRoute) setOpenProducts(true);
+  }, [isProductsRoute]);
 
   const item =
     "flex items-center justify-between px-3 py-2.5 rounded-lg text-[14px] font-medium cursor-pointer transition-all relative";
@@ -33,10 +42,9 @@ export default function Sidebar() {
           to="/"
           end
           className={({ isActive }) =>
-            `${item} ${
-              isActive
-                ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
-                : "hover:bg-slate-100 text-slate-700 border border-transparent"
+            `${item} ${isActive
+              ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
+              : "hover:bg-slate-100 text-slate-700 border border-transparent"
             }`
           }
         >
@@ -46,10 +54,16 @@ export default function Sidebar() {
           </div>
         </NavLink>
 
-        {/* PRODUCTS DROPDOWN */}
+        {/* PRODUCTS DROPDOWN BUTTON */}
         <button
           onClick={() => setOpenProducts(!openProducts)}
-          className={`${item} text-slate-700 hover:bg-slate-100 border border-transparent w-full mb-0`}
+          className={`
+            ${item} w-full mb-0 transition-all
+            ${openProducts || isProductsRoute
+              ? "bg-slate-100 border border-slate-200 text-slate-800"
+              : "text-slate-700 hover:bg-slate-100 border border-transparent"
+            }
+          `}
         >
           <div className={leftItem}>
             <i className="ri-price-tag-3-line text-lg mt-0.5"></i>
@@ -57,25 +71,27 @@ export default function Sidebar() {
           </div>
 
           <i
-            className={`ri-arrow-down-s-line transition-all ${
-              openProducts ? "rotate-180 text-[#EA6B23]" : ""
-            }`}
+            className={`
+              ri-arrow-down-s-line transition-all
+              ${openProducts || isProductsRoute ? "rotate-180 text-[#EA6B23]" : ""}
+            `}
           ></i>
         </button>
 
         {/* PRODUCTS SUBMENU */}
         <div
-          className={`overflow-hidden transition-all duration-300 ${
-            openProducts ? "max-h-40 mt-1" : "max-h-0"
-          }`}
+          className={`
+            overflow-hidden transition-all duration-300
+            ${openProducts || isProductsRoute ? "max-h-40 mt-1" : "max-h-0"}
+          `}
         >
+          {/* Add New Product */}
           <NavLink
-            to="/products/add"
+            to="/products/add-product"
             className={({ isActive }) =>
-              `flex items-center gap-2 ml-9 py-1.5 text-sm ${
-                isActive
-                  ? "text-[#EA6B23]"
-                  : "text-slate-600 hover:text-[#EA6B23]"
+              `flex items-center gap-2 ml-9 py-1.5 text-sm ${isActive
+                ? "text-[#EA6B23]"
+                : "text-slate-600 hover:text-[#EA6B23]"
               }`
             }
           >
@@ -83,13 +99,13 @@ export default function Sidebar() {
             Add New Product
           </NavLink>
 
+          {/* All Products */}
           <NavLink
-            to="/products/list"
+            to="/products/product-list"
             className={({ isActive }) =>
-              `flex items-center gap-2 ml-9 py-1.5 text-sm ${
-                isActive
-                  ? "text-[#EA6B23]"
-                  : "text-slate-600 hover:text-[#EA6B23]"
+              `flex items-center gap-2 ml-9 py-1.5 text-sm ${isActive
+                ? "text-[#EA6B23]"
+                : "text-slate-600 hover:text-[#EA6B23]"
               }`
             }
           >
@@ -97,13 +113,13 @@ export default function Sidebar() {
             All Products
           </NavLink>
 
+          {/* Active Products */}
           <NavLink
-            to="/products/active"
+            to="/products/active-products"
             className={({ isActive }) =>
-              `flex items-center gap-2 ml-9 py-1.5 text-sm ${
-                isActive
-                  ? "text-[#EA6B23]"
-                  : "text-slate-600 hover:text-[#EA6B23]"
+              `flex items-center gap-2 ml-9 py-1.5 text-sm ${isActive
+                ? "text-[#EA6B23]"
+                : "text-slate-600 hover:text-[#EA6B23]"
               }`
             }
           >
@@ -112,14 +128,13 @@ export default function Sidebar() {
           </NavLink>
         </div>
 
-        {/* INVOICE */}
+        {/* INVOICE LIST */}
         <NavLink
           to="/invoice-list"
           className={({ isActive }) =>
-            `${item} ${
-              isActive
-                ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
-                : "hover:bg-slate-100 text-slate-700 border border-transparent"
+            `${item} ${isActive
+              ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
+              : "hover:bg-slate-100 text-slate-700 border border-transparent"
             }`
           }
         >
@@ -128,14 +143,14 @@ export default function Sidebar() {
             <span>Invoice List</span>
           </div>
         </NavLink>
+
         {/* CREATE INVOICE */}
         <NavLink
           to="/create-invoice"
           className={({ isActive }) =>
-            `${item} ${
-              isActive
-                ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
-                : "hover:bg-slate-100 text-slate-700 border border-transparent"
+            `${item} ${isActive
+              ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
+              : "hover:bg-slate-100 text-slate-700 border border-transparent"
             }`
           }
         >
@@ -149,10 +164,9 @@ export default function Sidebar() {
         <NavLink
           to="/subscription"
           className={({ isActive }) =>
-            `${item} ${
-              isActive
-                ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
-                : "hover:bg-slate-100 text-slate-700 border border-transparent"
+            `${item} ${isActive
+              ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
+              : "hover:bg-slate-100 text-slate-700 border border-transparent"
             }`
           }
         >
@@ -166,10 +180,9 @@ export default function Sidebar() {
         <NavLink
           to="/reports"
           className={({ isActive }) =>
-            `${item} ${
-              isActive
-                ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
-                : "hover:bg-slate-100 text-slate-700 border border-transparent"
+            `${item} ${isActive
+              ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
+              : "hover:bg-slate-100 text-slate-700 border border-transparent"
             }`
           }
         >
@@ -183,10 +196,9 @@ export default function Sidebar() {
         <NavLink
           to="/help"
           className={({ isActive }) =>
-            `${item} ${
-              isActive
-                ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
-                : "hover:bg-slate-100 text-slate-700 border border-transparent"
+            `${item} ${isActive
+              ? "bg-[#EA6B23]/5 border border-[#f8d9c6] text-[#EA6B23]"
+              : "hover:bg-slate-100 text-slate-700 border border-transparent"
             }`
           }
         >

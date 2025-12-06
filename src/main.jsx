@@ -7,7 +7,9 @@ import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <Toaster position="top-center" toastOptions={{
+      className: "!z-[9999999999]"
+    }} />
     <AppRouter />
-    <Toaster position="top-center" />
   </React.StrictMode>
 );
