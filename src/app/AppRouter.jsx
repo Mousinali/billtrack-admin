@@ -5,7 +5,7 @@ import Layout from "./Layout";
 
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/Dashboard";
-import Settings from "../pages/Settings";
+import Subscription from "../pages/Subscription";
 import Invoice from "../pages/Invoicelist";
 import Createinvoice from "../pages/Createinvoice";
 import AddProduct from "../pages/products/AddProduct";
@@ -37,7 +37,7 @@ export default function AppRouter() {
             <Route index element={<Dashboard />} />
             <Route path="create-invoice" element={<Createinvoice />} />
             <Route path="invoice-list" element={<Invoice />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="subscription" element={<Subscription />} />
             {/* Product Routes */}
             <Route path="products/add-product" element={<AddProduct />} />
             <Route path="products/product-list" element={<ProductList />} />

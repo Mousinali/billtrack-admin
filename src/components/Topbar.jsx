@@ -170,7 +170,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
         {/* LOGOUT */}
         <button
           onClick={logout}
-          className="hidden sm:inline-flex text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100"
+          className="hidden sm:inline-flex text-xs font-medium px-3 py-1.5 rounded-lg border cursor-pointer border-slate-200 hover:bg-slate-100"
         >
           Logout
         </button>

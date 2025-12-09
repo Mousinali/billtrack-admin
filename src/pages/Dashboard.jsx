@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import SalesChart from "../components/SalesChart";
 import SubscriptionChart from "../components/SubscriptionChart";
