@@ -11,7 +11,6 @@ export default function Dashboard() {
   const invoices = [
     {
       id: "INV-20241",
-      customer: "Rahul Sharma",
       phone: "6290397299",
       date: "21 Feb 2025",
       time: "11:32 AM",
@@ -20,7 +19,6 @@ export default function Dashboard() {
     },
     {
       id: "INV-20242",
-      customer: "Neha Patel",
       phone: "7001239870",
       date: "21 Feb 2025",
       time: "10:12 AM",
@@ -29,7 +27,6 @@ export default function Dashboard() {
     },
     {
       id: "INV-20243",
-      customer: "Arjun Singh",
       phone: "9087654210",
       date: "20 Feb 2025",
       time: "05:44 PM",
@@ -38,7 +35,6 @@ export default function Dashboard() {
     },
     {
       id: "INV-20244",
-      customer: "Priya Das",
       phone: "7896541230",
       date: "20 Feb 2025",
       time: "03:20 PM",
@@ -51,7 +47,6 @@ export default function Dashboard() {
 
   const filteredData = invoices.filter(
     (item) =>
-      item.customer.toLowerCase().includes(search.toLowerCase()) ||
       item.phone.includes(search) ||
       item.id.toLowerCase().includes(search.toLowerCase())
   );
@@ -61,16 +56,6 @@ export default function Dashboard() {
       name: "Invoice ID",
       selector: (row) => row.id,
       sortable: true,
-    },
-    {
-      name: "Customer",
-      selector: (row) => row.customer,
-      sortable: true,
-      cell: (row) => (
-        <div className="flex items-center gap-2">
-          <span>{row.customer}</span>
-        </div>
-      ),
     },
     {
       name: "Phone",

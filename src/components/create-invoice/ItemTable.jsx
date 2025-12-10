@@ -40,17 +40,7 @@ export default function ItemTable({ rows, setRows }) {
   }, [rows]);
 
   // ALT + C → Clear all items
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.altKey && e.key.toLowerCase() === "c") {
-        e.preventDefault();
-        setRows([]);
-        setSelectAll(false);
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
+  
 
   // Update qty
   const updateQty = (index, value) => {
@@ -112,7 +102,7 @@ export default function ItemTable({ rows, setRows }) {
                       (e.target.value = e.target.value.replace(/[^0-9]/g, ""))
                     }
                     className="w-16 rounded border border-slate-300 py-1 px-2 text-end
-                               focus:ring-1 outline-none focus:ring-blue-500"
+                               focus:ring-1 outline-none focus:ring-blue-500 bg-white"
                   />
                 </TdCell>
 

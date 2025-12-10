@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import ItemSearch from "../components/create-invoice/ItemSearch";
 import ItemTable from "../components/create-invoice/ItemTable";
 import NewItemAdd from "../components/create-invoice/NewItemAdd";
@@ -9,12 +10,13 @@ import InvoiceOverview from "../components/create-invoice/InvoiceOverview";
 
 export default function CreateInvoice() {
   const [selectedItems, setSelectedItems] = useState([]);
+  const [discount, setDiscount] = useState(0);
+  const [selectAll, setSelectAll] = useState(false); // if you use this elsewhere
 
-  // 2️⃣ FUNCTIONS THAT USE selectedItems
+  // Add item
   const addItemToTable = (item) => {
     setSelectedItems((prev) => {
       if (prev.some((x) => x.name === item.name)) return prev;
-
       return [
         ...prev,
         {
@@ -29,36 +31,37 @@ export default function CreateInvoice() {
     });
   };
 
-  // 3️⃣ CALCULATIONS (MUST COME AFTER selectedItems is declared)
+  // CALCULATIONS
   const subTotal = selectedItems.reduce((sum, item) => sum + item.amount, 0);
 
   const taxRate = 0.05;
   const taxAmount = +(subTotal * taxRate).toFixed(2);
 
-  const totalAmount = +(subTotal + taxAmount).toFixed(2);
+  const totalBeforeDiscount = +(subTotal + taxAmount).toFixed(2);
+
+  // FINAL TOTAL AFTER DISCOUNT
+  const totalAmount = +(totalBeforeDiscount - discount).toFixed(2);
+
+  // ALT + C -> CLEAR INVOICE
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.altKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+
+        // reset everything
+        setSelectedItems([]);
+        setSelectAll(false);
+        setDiscount(0);
+
+        toast.success("Invoice cleared");
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
 
-  const SectionTitle = ({ title, shortKey }) => (
-    <p className="text-sm text-gray-600 mb-2 flex justify-between">
-      {title}
-      {shortKey && <span className="text-gray-400">[{shortKey}]</span>}
-    </p>
-  );
-
-  const Row = ({ label, value, bold }) => (
-    <div className="flex justify-between text-sm py-1">
-      <span className={bold ? "font-semibold text-gray-900" : "text-gray-700"}>
-        {label}
-      </span>
-      <span className={bold ? "font-semibold text-gray-900" : "text-gray-700"}>
-        {value}
-      </span>
-    </div>
-  );
-
-  const CardBox = ({ children }) => (
-    <div className="border border-slate-400 p-3 bg-white">{children}</div>
-  );
 
 
 
@@ -89,38 +92,24 @@ export default function CreateInvoice() {
       <div className=" flex flex-col gap-4">
 
         {/* Discount + Additional Charge Buttons */}
-        <AddDiscount />
+        <AddDiscount onApplyDiscount={(value) => setDiscount(value)} />
 
         {/* Bill Details */}
         <InvoiceOverview
           subTotal={subTotal}
           taxAmount={taxAmount}
+          discount={discount}
           totalAmount={totalAmount}
         />
 
 
-        {/* Received Amount */}
-        <CardBox>
-          <SectionTitle title="Received Amount" shortKey="F4" />
-
-          <div className="flex justify-between items-center mt-2">
-            <p className="text-lg font-semibold text-gray-900">₹ 250</p>
-
-            <select className="border px-2 py-1 text-sm">
-              <option>Cash</option>
-              <option>UPI</option>
-              <option>Card</option>
-            </select>
-          </div>
-        </CardBox>
-
         {/* Save Buttons */}
         <div className="mt-5 flex gap-2">
           <button className="flex-1 border border-red-500 text-red-500 hover:text-white hover:bg-red-500 transition-all duration-100 cursor-pointer py-2 text-sm">
-            Save & Print [F6]
+            Save Bill [SHIFT + S]
           </button>
           <button className="flex-1 bg-[#554de9] text-white cursor-pointer py-2 text-sm">
-            Save Bill [F7]
+            Save & Print [ENTER]
           </button>
         </div>
       </div>
