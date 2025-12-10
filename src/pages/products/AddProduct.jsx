@@ -211,7 +211,7 @@ export default function AddProduct() {
                             bg-[#554de9] text-white font-medium
                             hover:bg-green-600 cursor-pointer active:scale-[0.97]
                             transition-all duration-200 border border-transparent
-                            focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer"
+                            focus:outline-none focus:ring-4 focus:ring-blue-200 "
                         >
                             <i className="ri-save-line text-lg"></i>
                             Save Product
@@ -224,7 +224,7 @@ export default function AddProduct() {
                             className="flex items-center gap-2 px-6 py-3 rounded-lg
                             bg-red-100 text-red-700 font-medium border border-red-300
                             hover:bg-red-500 hover:text-white active:scale-[0.97]
-                            transition-all duration-200 cursor-pointer
+                            transition-all duration-200 
                             focus:outline-none focus:ring-4 focus:ring-slate-200 cursor-pointer"
                         >
                             <i className="ri-refresh-line text-lg"></i>

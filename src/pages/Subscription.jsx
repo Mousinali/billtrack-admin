@@ -77,7 +77,7 @@ export default function Subscription() {
                         {/* Popular Badge */}
                         {plan.popular && (
                             <span className="absolute top-3 right-3 px-2 py-0.5 text-[10px] font-medium 
-        bg-green-100 text-green-700 rounded-full border border-green-200">
+                             bg-green-100 text-green-700 rounded-full border border-green-200">
                                 Popular
                             </span>
                         )}
@@ -92,8 +92,8 @@ export default function Subscription() {
 
                         {/* Button */}
                         <button className="
-        w-full py-2.5 rounded-lg text-sm font-semibold mb-5
-        bg-green-500 text-white hover:bg-green-600 transition">
+                        w-full py-2.5 rounded-lg text-sm font-semibold mb-5
+                        bg-green-500 text-white hover:bg-green-600 transition">
                             {plan.button}
                         </button>
 
@@ -135,7 +135,6 @@ export default function Subscription() {
             {/* Note */}
             <p className="text-sm text-gray-500 text-center mt-6 max-w-xl mx-auto leading-relaxed">
                 <span className="text-red-600 font-semibold">Note:</span> After the trial period, the Free Plan will be limited to 20 bills per day.
-                This limit may change based on requirements.
             </p>
 
 
