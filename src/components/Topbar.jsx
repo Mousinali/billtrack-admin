@@ -80,7 +80,7 @@ px-2 py-[3px] rounded-sm bg-gray-50 border border-gray-200  text-slate-600 font-
         <button
           ref={notifBtnRef}
           onClick={() => setOpenNotif(!openNotif)}
-          className="relative text-xl hover:text-[#EA6B23] transition"
+          className="relative text-xl hover:text-[#EA6B23] transition cursor-pointer"
         >
           <i className="ri-notification-3-line text-2xl"></i>
 

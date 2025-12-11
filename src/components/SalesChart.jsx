@@ -90,7 +90,7 @@ export default function SalesChart() {
                         <button
                             key={btn.key}
                             onClick={() => setFilter(btn.key)}
-                            className={`px-4 py-1.5 text-sm rounded-md font-medium transition-all ${filter === btn.key
+                            className={`px-4 py-1.5 text-sm rounded-md font-medium transition-all cursor-pointer ${filter === btn.key
                                 ? "bg-white shadow-sm text-blue-900"
                                 : "text-gray-600 hover:text-gray-800"
                                 }`}>
